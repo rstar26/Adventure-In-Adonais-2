@@ -42,7 +42,7 @@ class Player_character():
             return
     
     def player_hit_points(self):
-        if "travelling cloak" and not "shield" in self.armor:
+        if "travelling cloak" in self.armor:
             player.armor_bonus = 5
         elif "travelling cloak" and "shield" in self.armor:
             player.armor_bonus = 10
