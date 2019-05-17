@@ -25,6 +25,7 @@ class Player_character():
     def __init__(self):        
         self.name = None
         self.armor_bonus = 0
+        self.hit_points = 15
         self.armor = []
         self.home = None
         self.weapons = []
@@ -44,11 +45,9 @@ class Player_character():
     def player_hit_points(self):
         if "travelling cloak" in self.armor:
             player.armor_bonus = 5
-        elif "travelling cloak" and "shield" in self.armor:
+        if "travelling cloak" and "shield" in self.armor:
             player.armor_bonus = 10
-        else:
-            player.armor_bonus = 0
-        hit_points = 15 + player.armor_bonus
+        hit_points = self.hit_points + self.armor_bonus
         return hit_points
     
     def to_hit(self):
