@@ -1185,7 +1185,7 @@ def black_hollow_camp():
         time.sleep(1)
         print("\nThe halfling you saved stands up.")
         time.sleep(1)
-        print("\nShe has bright blue hair, and pointy ears, covered in gold earing. She has tattoo's on her face.")
+        print("\nShe has bright blue hair, and pointy ears, covered in gold earings. She has tattoo's on her face.")
         time.sleep(1)
         print(f"""\n\"Thank you for saving me, those bandits won't give up. I'm Sapphire by the way, the quartermaster of Black Hollow Camp.
         
@@ -1201,7 +1201,7 @@ def black_hollow_camp():
         print("\nTalk to 'Sapphire', talk to 'Crowly', talk to 'Bruenor' or 'leave' camp?")
         choice = make_choice()
         if "sapphire" in choice:
-            print("\nYou approach Sapphires shop front and great her.")
+            print("\nYou approach Sapphires shop front and greet her.")
             time_delay()
             black_hollow_camp_sapphire_shop()
         elif "crowly" in choice:
@@ -1224,7 +1224,7 @@ def black_hollow_camp():
                 break
 
 def black_hollow_camp_sapphire_shop():
-    print("placeholder")
+    print(f"\nWelcome {player.name}, what can I get you?")
 
 
                     
