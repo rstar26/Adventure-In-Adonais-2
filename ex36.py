@@ -42,11 +42,23 @@ class Player_character():
         else:
             return
     
+    def player_armor_bonus_calc(self):
+        if not self.armor:
+            self.armor_bonus = 0
+        elif "travelling cloak" in self.armor and not "chain mail" in self.armor:
+            self.armor_bonus = 5
+        elif "travelling cloak" in self.armor and "chain mail" in self.armor:
+            self.armor_bonus = 15
+        elif "chain mail" in self.armor and not "travelling cloak" in self.armor:
+            self.armor_bonus = 10
+        elif "travelling cloak" not in self.armor and "chain mail" not in self.armor:
+            self.armor_bonus = 0
+        else:
+            self.armor_bonus = 0
+
+    
     def player_hit_points(self):
-        if "travelling cloak" in self.armor:
-            player.armor_bonus = 5
-        if "travelling cloak" and "shield" in self.armor:
-            player.armor_bonus = 10
+        
         hit_points = self.hit_points + self.armor_bonus
         return hit_points
     
@@ -116,7 +128,29 @@ class Player_character():
         else:
             print("\nI do not understand that.")
             player_damage = self.player_weapon_choice()
-            return player_damage           
+            return player_damage
+
+class Item(object):
+    def __init__(self, name, dmg, crt, health_bonus, price):
+        self.name = name
+        self.dmg = dmg
+        self.crt = crt
+        self.health_bonus = health_bonus
+        self.price = price
+
+class Store_Inventory(object):
+    def __init__(self):
+        self.items = {}
+
+    def add_items(self, item):
+        self.items[item.name] = item
+
+    def print_items(self):
+        print("\t".join(["Name         ", "Dmg", "Crt", "+HP", "Val"]))
+        for item in self.items.values():
+            print("\t".join([str(x) for x in [item.name, item.dmg, item.crt, item.health_bonus, item.price]]))
+
+
 class Giant_rat():
     def __init__(self):
         self.name = "Giant Rat"
@@ -402,6 +436,7 @@ def battler():
     global monster
     global player
     monster_hp = monster.hit_points
+    player.player_armor_bonus_calc()
     player_hp = player.player_hit_points()
     monster_dead = False
     while monster_hp > 0 and player_hp > 0:
@@ -1224,7 +1259,82 @@ def black_hollow_camp():
                 break
 
 def black_hollow_camp_sapphire_shop():
-    print(f"\nWelcome {player.name}, what can I get you?")
+    global st_inventory
+    print(f"\nWelcome to my shop {player.name}.\n")
+    st_inventory.print_items()
+    print(f"\nYou have {player.gold} gold.")
+    item_choice = str.lower(input("\nWhat can I get for you?\n>"))
+    if "broad sword" in item_choice: 
+        if player.gold >= 250:
+            print("\n\"The Broad Sword, nice choice!\"")
+            player.gold = player.gold - 250
+            player.weapons.remove("Dagger")
+            player.weapons.append("Broad Sword")
+            st_inventory.items.pop("Broad Sword")
+            clr_screen()
+            black_hollow_camp_sapphire_shop()
+        else:
+            print(f"\n\"Sorry {player.name}, you don't have enough gold.\"")
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+    elif "acorns" or "acorn" or "acorn[x3]" in item_choice: 
+        if player.gold >= 200:
+            print("\n\"I love Magic Acorns.\"")
+            player.acorns = player.acorns + 3
+            print(f"\nYou now have {player.acorns} magic Acorns.")
+            player.gold = player.gold - 200
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+            return item_choice
+        else:
+            print(f"\n\"Sorry {player.name}, you don't have enough gold.\"")
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+            return item_choice
+    elif "wand charges" or "wand" or "wand charges[x3]" in item_choice:
+        if player.gold >= 150:
+            print(f"\nYou hand Sapphire your wand, she drops it in a vat of swirling multi-colored liquid.")
+            time_delay()
+            print(f"\"Here you go {player.name}, 3 more charges for your wand.\"")
+            player.gold = player.gold - 150
+            player.wand_charges = player.wand_charges + 3
+            print(f"\nYour Wand now has {player.wand_charges} charges.")
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+            return item_choice
+        else:
+            print(f"\n\"Sorry {player.name}, you don't have enough gold.\"")
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+            return item_choice
+    elif "chain" or "chain mail" or "armor" in item_choice:
+        if player.gold >= 300:
+            print("\n\"A fine choice, this will keep you protected.\"")
+            player.gold = player.gold - 300
+            player.armor.append("chain mail")
+            st_inventory.items.pop("chain mail")
+            player.player_hit_points()
+            print(f"\nYou now have {player.hit_points} HP.")
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+            return item_choice
+        else:
+            print("\n\"Can I get you anything else?\"")
+            item_choice = str.lower(input("\n>"))
+            return item_choice
+    elif "leave" or "back" or "exit" or "nothing" in item_choice:
+        print(f"\nThanks for coming {player.name}, come back if you need anything else!")
+        clr_screen()
+        black_hollow_camp()
+    else:
+        print("\nI do not understand that.")
+        item_choice = str.lower(input("\nWhat can I get for you?\n>"))
+        return item_choice
+
+
+
+        
+
 
 
                     
@@ -1559,6 +1669,7 @@ def everton_ruins_lords_chamber():
             
             player.armor.append("travelling cloak")
             print("\nThe enchantment on the cloak envelopes you, you feel stronger.")
+            player.player_armor_bonus_calc()
             print(f"\nYou now have {player.player_hit_points()} HP, and have protection from the elements.")
             everton_ruins_lords_chamber_searched = True
             everton_ruins_lords_chamber()
@@ -1805,6 +1916,7 @@ def cappadocia_desert_n_e_s():
 def cappadocia_desert_n_e_s_e():
     global cappadocia_basilisk_dead
     global monster
+    global st_inventory
     print("\nYou come to a depression in the desert, in the center you find the long dead corpse of a human, like you.")
     print("\n'search' corpse, move 'north', move 'east', move 'south', or move 'west'?")
     choice = make_choice()
@@ -1812,9 +1924,11 @@ def cappadocia_desert_n_e_s_e():
         if "search" in choice:
             print("\nYou search the corpse.")
             time_delay()
-            print("\nBurried in the sand beneath the corpse you find a shield.")
-            player.armor.append("shield")
-            print(f"\nYou will now be better able to defend yourself. You now have {player.player_hit_points()} HP!")
+            print("\nBurried in the sand beneath the corpse you find a Magic Wand!")
+            player.weapons.append("Wand")
+            player.wand_charges = 2
+            st_inventory.add_items(Item("Wand Charge[x3]", 15, 20, 0, 125))
+            print(f"\nYou will now be better able to defeat your enemies.")
             print("\nDisturbing the corpse summons a horror from the deep!")
             time_delay()
             monster = Desert_basilisk()
@@ -1892,6 +2006,10 @@ elif option == 2:
     battler_function = battler_2
 player = Player_character() # initialize Player_Character
 player.weapons.append("Fist")
+st_inventory = Store_Inventory() # initialize the shop
+st_inventory.add_items(Item('Broad Sword', 10, 15, 0, 150))
+st_inventory.add_items(Item("Acorn[x3]", 20, 30, 0, 200))
+st_inventory.add_items(Item("Chain Mail", 0, 0, 10, 300))
 character_creator()
 introduction()
 
