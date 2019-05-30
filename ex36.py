@@ -18,6 +18,7 @@ everton_ruins_bed_chamber_searched = False
 everton_ruins_footlocker_key = False
 cappadocia_basilisk_dead = False
 black_hollow_camp_battle_won = False
+crowly_met = False
 monster = None
 player = None
 
@@ -73,11 +74,14 @@ class Player_character():
     
     def player_weapon_choice(self):
         print("\nPlease select a weapon to attack with:")
-        print(f"{self.weapons}")
+        for i, item in enumerate(self.weapons, 1):
+            print(i, '. ' + item, ' ', sep=' ', end='')
+        #print(f"{self.weapons}")
         self.player_inventory_count()
         player_weapon_choice = str.lower(input("\n> "))
-        self.current_weapon = player_weapon_choice
-        if "fist" in player_weapon_choice and "Fist" in self.weapons:
+        #self.current_weapon = player_weapon_choice
+        if "1" in player_weapon_choice and "Fist" in self.weapons or "fist" in player_weapon_choice and "Fist" in self.weapons:
+            self.current_weapon = "Fist"
             crit_chance = self.to_hit()
             if crit_chance in range(70, 100):
                 player_damage = random.randint(2, 4)
@@ -85,7 +89,8 @@ class Player_character():
             else:
                 player_damage = random.randint(1, 2)
                 return player_damage    
-        elif "dagger" in player_weapon_choice and "Dagger" in self.weapons:
+        elif "1" in player_weapon_choice and "Dagger" in self.weapons or "dagger" in player_weapon_choice and "Dagger" in self.weapons:
+            self.current_weapon = "Dagger"
             crit_chance = self.to_hit()
             if crit_chance in range(70, 100):
                 player_damage = random.randint(6, 10)
@@ -93,8 +98,18 @@ class Player_character():
             else:
                 player_damage = random.randint(1, 5)
                 return player_damage   
-        elif "wand" in player_weapon_choice and "Wand" in self.weapons:
+        elif "1" in player_weapon_choice and "Broad Sword" in self.weapons or "broad sword" in player_weapon_choice and "Broad Sword" in self.weapons:
+            self.current_weapon = "Broad Sword"
+            crit_chance = self.to_hit()
+            if crit_chance in range(70,100):
+                player_damage = random.randint(10, 15)
+                return player_damage
+            else:
+                player_damage = random.randint(5, 10)
+                return player_damage
+        elif "3" in player_weapon_choice and "Wand" in self.weapons or "wand" in player_weapon_choice and "Wand" in self.weapons:
             wand_charges = self.wand_charges
+            self.current_weapon = "Magic Wand"
             if wand_charges > 0:
                 crit_chance = self.to_hit()
                 if crit_chance in range(70, 100):
@@ -109,7 +124,8 @@ class Player_character():
                 print("You are out of charges.")
                 player_damage = self.player_weapon_choice()
                 return player_damage
-        elif "acorn" in player_weapon_choice and "Acorn" in self.weapons:
+        elif "2" in player_weapon_choice and "Acorn" in self.weapons or "acorn" in player_weapon_choice and "Acorn" in self.weapons:
+            self.current_weapon = "Magic Acorn"
             acorns_in_inv = self.acorns
             if acorns_in_inv > 0:
                 crit_chance = self.to_hit()
@@ -1263,13 +1279,13 @@ def black_hollow_camp_sapphire_shop():
     print(f"\nWelcome to my shop {player.name}.\n")
     st_inventory.print_items()
     print(f"\nYou have {player.gold} gold.")
-    item_choice = str.lower(input("\nWhat can I get for you?\n>"))
+    item_choice = str.lower(input("\nWhat can I get for you?(Type 'leave', 'back', or 'exit' anytime to exit)\n>"))
     if "broad sword" in item_choice: 
-        if player.gold >= 250:
+        if player.gold >= 100:
             print("\n\"The Broad Sword, nice choice!\"")
-            player.gold = player.gold - 250
+            player.gold = player.gold - 100
             player.weapons.remove("Dagger")
-            player.weapons.append("Broad Sword")
+            player.weapons.insert(0, "Broad Sword")
             st_inventory.items.pop("Broad Sword")
             clr_screen()
             black_hollow_camp_sapphire_shop()
@@ -1278,11 +1294,11 @@ def black_hollow_camp_sapphire_shop():
             print("\n\"Can I get you anything else?\"")
             item_choice = str.lower(input("\n>"))
     elif "acorns" or "acorn" or "acorn[x3]" in item_choice: 
-        if player.gold >= 200:
+        if player.gold >= 150:
             print("\n\"I love Magic Acorns.\"")
             player.acorns = player.acorns + 3
             print(f"\nYou now have {player.acorns} magic Acorns.")
-            player.gold = player.gold - 200
+            player.gold = player.gold - 150
             print("\n\"Can I get you anything else?\"")
             item_choice = str.lower(input("\n>"))
             return item_choice
@@ -1292,11 +1308,11 @@ def black_hollow_camp_sapphire_shop():
             item_choice = str.lower(input("\n>"))
             return item_choice
     elif "wand charges" or "wand" or "wand charges[x3]" in item_choice:
-        if player.gold >= 150:
+        if player.gold >= 75:
             print(f"\nYou hand Sapphire your wand, she drops it in a vat of swirling multi-colored liquid.")
             time_delay()
             print(f"\"Here you go {player.name}, 3 more charges for your wand.\"")
-            player.gold = player.gold - 150
+            player.gold = player.gold - 75
             player.wand_charges = player.wand_charges + 3
             print(f"\nYour Wand now has {player.wand_charges} charges.")
             print("\n\"Can I get you anything else?\"")
@@ -1308,9 +1324,9 @@ def black_hollow_camp_sapphire_shop():
             item_choice = str.lower(input("\n>"))
             return item_choice
     elif "chain" or "chain mail" or "armor" in item_choice:
-        if player.gold >= 300:
+        if player.gold >= 250:
             print("\n\"A fine choice, this will keep you protected.\"")
-            player.gold = player.gold - 300
+            player.gold = player.gold - 250
             player.armor.append("chain mail")
             st_inventory.items.pop("chain mail")
             player.player_hit_points()
@@ -1331,8 +1347,25 @@ def black_hollow_camp_sapphire_shop():
         item_choice = str.lower(input("\nWhat can I get for you?\n>"))
         return item_choice
 
-
-
+def black_hollow_camp_crowly():
+    global crowly_met
+    while not crowly_met:
+        print("\nYou approach Crowly and introduce yourself.")
+        print(f"\n\"Well met then {player.name}, not many humans in Adonais!")
+        crowly_met = True
+        return
+    while crowly_met:
+        print(f"\nGood to see you again {player.name}, how fare thee?")
+        return
+    if "travelling cloak" in player.armor:
+        print("""\n\"I see you have a travelling cloak, if you're looking to get home, you will need to head up Mount Holmfirth.
+        There you will need to find the torch, you'll need it to get through the cavern west of here. Make sure you are well prepared
+        because the monsters there are quite a bit stronger than the ones around here.\"""")
+        print("\nYou thank Crowly for the advice and return to the main camp.")
+        time_delay()
+        os.system('cls')
+        black_hollow_camp()
+    
         
 
 
@@ -1927,7 +1960,7 @@ def cappadocia_desert_n_e_s_e():
             print("\nBurried in the sand beneath the corpse you find a Magic Wand!")
             player.weapons.append("Wand")
             player.wand_charges = 2
-            st_inventory.add_items(Item("Wand Charge[x3]", 15, 20, 0, 125))
+            st_inventory.add_items(Item("Wand Charge[x3]", 15, 20, 0, 75))
             print(f"\nYou will now be better able to defeat your enemies.")
             print("\nDisturbing the corpse summons a horror from the deep!")
             time_delay()
@@ -2007,9 +2040,9 @@ elif option == 2:
 player = Player_character() # initialize Player_Character
 player.weapons.append("Fist")
 st_inventory = Store_Inventory() # initialize the shop
-st_inventory.add_items(Item('Broad Sword', 10, 15, 0, 150))
-st_inventory.add_items(Item("Acorn[x3]", 20, 30, 0, 200))
-st_inventory.add_items(Item("Chain Mail", 0, 0, 10, 300))
+st_inventory.add_items(Item('Broad Sword', 10, 15, 0, 100))
+st_inventory.add_items(Item("Acorn[x3]", 20, 30, 0, 150))
+st_inventory.add_items(Item("Chain Mail", 0, 0, 10, 250))
 character_creator()
 introduction()
 
