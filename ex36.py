@@ -19,6 +19,7 @@ everton_ruins_footlocker_key = False
 cappadocia_basilisk_dead = False
 black_hollow_camp_battle_won = False
 crowly_met = False
+bruenor_met = False
 monster = None
 player = None
 
@@ -34,6 +35,7 @@ class Player_character():
         self.gold = 0
         self.wand_charges = None
         self.acorns = None
+        self.items = []
 
     def player_inventory_count(self):
         if "Wand" in self.weapons:
@@ -1240,10 +1242,10 @@ def black_hollow_camp():
         time.sleep(1)
         print(f"""\n\"Thank you for saving me, those bandits won't give up. I'm Sapphire by the way, the quartermaster of Black Hollow Camp.
         
-        You give her your name, and tell her you are trying to find your way home.
+You give her your name, and tell her you are trying to find your way home.
         
-        \"Well {player.name} It's nice to meet you, if you need to buy any supplies, please come talk to me again, also, talk to some of the
-        other guards stationed here, they might be able to offer you some advice on how to get home.""")
+\"Well {player.name} It's nice to meet you, if you need to buy any supplies, please come talk to me again, also, talk to some of the
+other guards stationed here, they might be able to offer you some advice on how to get home.""")
         black_hollow_camp_battle_won = True
         clr_screen()
         black_hollow_camp()
@@ -1338,7 +1340,7 @@ def black_hollow_camp_sapphire_shop():
             print("\n\"Can I get you anything else?\"")
             item_choice = str.lower(input("\n>"))
             return item_choice
-    elif "leave" or "back" or "exit" or "nothing" in item_choice:
+    elif "leave" in item_choice or "back" in item_choice or "exit" in item_choice or "nothing" in item_choice:
         print(f"\nThanks for coming {player.name}, come back if you need anything else!")
         clr_screen()
         black_hollow_camp()
@@ -1351,23 +1353,98 @@ def black_hollow_camp_crowly():
     global crowly_met
     while not crowly_met:
         print("\nYou approach Crowly and introduce yourself.")
+        time.sleep(1)
         print(f"\n\"Well met then {player.name}, not many humans in Adonais!")
-        crowly_met = True
-        return
+        time.sleep(1)
+        if "travelling cloak" in player.armor:
+            print("""\n\"I see you have a travelling cloak, if you're looking to get home, you will need to head up Mount Holmfirth.
+There you will need to find the torch, you'll need it to get through the cavern west of here. Make sure you are well prepared
+because the monsters there are quite a bit stronger than the ones around here.\"""")
+            time.sleep(3)
+            print("\nYou thank Crowly for the advice and return to the main camp.")
+            crowly_met = True
+            clr_screen()
+            black_hollow_camp()
+        elif "travelling cloak" not in player.armor:
+            print("""\n\"I heard from Sapphire that you were looking to get home, you need a to head up Mount Holmfirth, in order to do that
+you will need something to keep you warm. I heard you might be able to find something over at Everton Ruins, it's to the south east.\"""")
+            time.sleep(3)
+            print("\nYou thank Crowly for the advice and return to the main camp.")
+            crowly_met = True
+            clr_screen()
+            black_hollow_camp()
     while crowly_met:
         print(f"\nGood to see you again {player.name}, how fare thee?")
-        return
-    if "travelling cloak" in player.armor:
-        print("""\n\"I see you have a travelling cloak, if you're looking to get home, you will need to head up Mount Holmfirth.
-        There you will need to find the torch, you'll need it to get through the cavern west of here. Make sure you are well prepared
-        because the monsters there are quite a bit stronger than the ones around here.\"""")
-        print("\nYou thank Crowly for the advice and return to the main camp.")
-        time_delay()
-        os.system('cls')
-        black_hollow_camp()
-    
-        
-
+        time.sleep(1)
+        if "travelling cloak" in player.armor:
+            print("""\n\"I see you have a travelling cloak, if you're looking to get home, you will need to head up Mount Holmfirth.
+There you will need to find the torch, you'll need it to get through the cavern west of here. Make sure you are well prepared
+because the monsters there are quite a bit stronger than the ones around here.\"""")
+            time.sleep(3)
+            print("\nYou thank Crowly for the advice and return to the main camp.")
+            clr_screen()
+            black_hollow_camp()
+        elif "travelling cloak" not in player.armor:
+            print("""\n\"I heard from Sapphire that you were looking to get home, you need a to head up Mount Holmfirth, in order to do that
+you will need something to keep you warm. I heard you might be able to find something over at Everton Ruins, it's to the south east.\"""")
+            time.sleep(2)
+            print("\nYou thank Crowly for the advice and return to the main camp.")
+            clr_screen()
+            black_hollow_camp()
+   
+def black_hollow_camp_bruenor():
+    global bruenor_met
+    while not bruenor_met:
+        if "torch" not in player.items:
+            print("\nYou approach the Dwarf in battered plate armor and introduce yourself.")
+            time.sleep(1)
+            print(f"\n\"Well then {player.name}, It's good ta meet ya!\"")
+            time.sleep(1)
+            print("\nYou tell Bruenor you are trying to make your way home.")
+            time.sleep(1)
+            print("\nAfter some thought he responds.")
+            time.sleep(1)
+            print("""\n\"Well then let me tell ye. If yet be wanting to get home, ye need to head through the spider cavern. I order ta do that
+        ye be needing a torch ta clear tha webs! Climb Mouth Holmfirth to find that!""")
+            time.sleep(2)
+            print("\nYou thank Bruenor and return to the main camp")
+            bruenor_met = True
+            clr_screen()
+            black_hollow_camp()
+        elif "torch" in player.items:
+            print("\nYou approach the Dwarf in battered plate armor and introduce yourself.")
+            time.sleep(1)
+            print(f"\n\"Well then {player.name}, It's good ta meet ya!\"")
+            time.sleep(1)
+            print("\nYou tell Bruenor you are trying to make your way home.")
+            time.sleep(1)
+            print("\nHe glances at the torch belted to you waist and says.")
+            time.sleep(1)
+            print("\n\"Seems yer half way there, head to the spider cave west of here, yer way home is through there!")
+            time.sleep(1)
+            print("\nYou thank Bruenor and return to the main camp")
+            bruenor_met = True
+            clr_screen()
+            black_hollow_camp()
+    while bruenor_met:
+        if "torch" not in player.items:
+            print("\nYou greet Bruenor and ask him again how to get home.")
+            time.sleep(1)
+            print(f"\n\"Good to see ye again {player.name} seems ye haven't found that Torch yet! Head up Mouth Holfirth ta find it!")
+            time.sleep(1)
+            print("\nYou thank Bruenor and return to the main camp.")
+            time.sleep(1)
+            clr_screen()
+            black_hollow_camp()
+        elif "torch" in player.items:
+            print("\nYou greet Bruenor and ask him again how to get home.")
+            time.sleep(1)
+            print(f"\n\"Well met {player.name}, seems ye found that torch! Good on ye. Best be headed west to that spider cave if ye want to get home!\"")
+            time.sleep(1)
+            print("\nYou thank Bruenor and return to the main camp.")
+            time.sleep(1)
+            clr_screen()
+            black_hollow_camp()
 
 
                     
